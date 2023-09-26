@@ -1,0 +1,63 @@
+{% extends 'chat/base.html' %} {% block title %}Welcome To Talkie{% endblock %}
+
+    
+        {% block body %}
+        
+{% load static %}
+<div id="chat-content">
+        <div id="chat-contacts">
+            <!-- <div id="search-chatname">
+                <form action="" class="search-box">
+                    <input type="text" placeholder="Search Chats...">
+                    <button type="submit"><i class="ion-search">
+                            <a href="#"></a>
+                        </i></button>
+                </form>
+            </div> -->
+            <div class="chatnames">
+                {% for name in names %}
+                <div class="chatname" onclick="selectChat(this);">
+                    <div class="dp"><img src="{{ name.profile.dp.url }}"></div>
+                    <div class="name" data-username="{{ name }}">{{name}}</div>
+                    <div class="notification-badge"></div>
+                </div>
+                {% endfor %}
+                
+
+            </div>
+        </div>
+        <div id="chats">
+            <div class="active-contact hidden">
+                <div class="backbtn"><i class="ion-android-arrow-back"></i>
+                </div>
+                
+                <div class="dp"><img src="{% static 'chat/assets/blank-picture.png' %}" alt=""></div>
+                <div class="name"></div>
+                <div class="actions" title="Be happy"><i class="ion-android-happy">
+                        <a href="#"></a>
+                    </i></div>
+
+            </div>
+            <div class="chat-messages">
+                <!-- <div class="texts">
+                    <div class="sent"> hi wassaphi wassaphi wassaphi wassaphi wassaphi wassaphi wassaphi wassaphi
+                        wassaphi wassaphi wassaphi wassaphi wassaphi wassaphi wassap hi hi hi</div>
+                </div>
+                <div class="received">hi wassap</div> -->
+                <div class="box"><i class="ion-leaf"></i>
+                </div>
+                
+            </div>
+
+            <div id="messagebox" class="hidden">{% csrf_token %}
+                <form action="" method="post" class="message-box">
+                    <input id="message-input" type="text" name="message" placeholder="Type Your Message..." required></input>
+                    <button type="submit" ><i class="ion-android-send">
+                            <a href="#"></a>
+                        </i></button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+        {% endblock %}

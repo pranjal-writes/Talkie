@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} {% endblock %}
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Archivo:wght@100;300;400&family=Roboto:wght@100;300;400;500&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link class="dark-theme" rel="stylesheet" href="{% static 'chat/css/style.css' %}">
+    <link class="light-theme" rel="stylesheet" href="{% static 'chat/css/style-2.css' %}" disabled>
+    <link class="color-1-link" rel="stylesheet" href="{% static 'chat/css/color-2.css' %}" disabled>
+    <link class="color-2-link" rel="stylesheet" href="{% static 'chat/css/color-5.css' %}" disabled>
+    <link class="color-3-link" rel="stylesheet" href="{% static 'chat/css/color-6.css' %}">
+    <style id="style2"></style>
+
+    {% block css %}{% endblock %}
+</head>
+
+
+
+<body>
+    <div id="talkie">
+        <div id="nav-menu">
+            <div id="iconbtn">
+                <a href="/login"><i class="ion-leaf"></i></a>
+            </div>
+            <div id="nav-icons">
+                <ul>
+                    <a id="chat-page" href="#">
+                        <li class="select active" onclick="select(this);">
+                            <i class="ion-android-chat"></i>
+                        </li>
+                    </a>
+                    <!-- <a id="group-chat" href="group_chat">
+                        <li class="select" onclick="select(this);">
+                            <i class="ion-ios-people"></i>
+                        </li>
+                    </a> -->
+
+
+                    <a id="notifications" href="notifications">
+                        <li class="select" onclick="select(this);">
+                            <i class="ion-android-notifications"></i>
+                        </li>
+                    </a>
+
+
+                    <a id="search_user" href="search_user">
+                        <li class="select" onclick="select(this);">
+
+                            <i class="ion-search"></i>
+                        </li>
+                    </a>
+                    <a id="user-profile" href="user_profile">
+                        <li class="select" onclick="select(this);">
+                            <i class="ion-android-person"></i>
+
+                        </li>
+                    </a>
+                    
+                </ul>
+            </div>
+            <div id="theme"><i class="ion-tshirt">
+
+                </i></div>
+            <div class="style-switcher">
+                <ul>
+                    <li class="color-1"></li>
+                    <li class="color-2"></li>
+                    <li class="color-3"></li>
+                    <li class="light-dark-switch"><i class="ion-ios-sunny sun-moon"></i></li>
+                </ul>
+            </div>
+        </div>
+        {% block body%} {% block content %} {% endblock %} {%endblock%}
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+    <script src="{% static 'chat/js/script.js' %}"></script>
+    <script id="script2"></script>
+{% block js %}
+
+
+
+{% endblock %}
+</body>
+
+<script>
+    $(document).ready(function () {
+
+
+
+                // themes menu display
+$('#theme').click(function () {
+    $('.style-switcher').toggle(function () {
+        $('.style-switcher').addClass('open'), function () {
+            $('.style-switcher').css('display', 'block')
+        }
+
+    });
+
+})
+
+// themes selection
+
+$('.color-1').click(function () {
+    $('.color-1-link').removeAttr('disabled');
+    $('.color-2-link').prop('disabled', true);
+    $('.color-3-link').prop('disabled', true);
+    $('#theme').click();
+})
+$('.color-2').click(function () {
+    $('.color-2-link').removeAttr('disabled');
+    $('.color-1-link').prop('disabled', true);
+    $('.color-3-link').prop('disabled', true);
+    $('#theme').click();
+})
+$('.color-3').click(function () {
+    $('.color-3-link').removeAttr('disabled');
+    $('.color-2-link').prop('disabled', true);
+    $('.color-1-link').prop('disabled', true);
+    $('#theme').click();
+})
+$('.light-dark-switch').click(function () {
+    if ($('.light-theme').prop('disabled')) {
+        $('.light-theme').removeAttr('disabled')
+        $('.dark-theme').prop('disabled', true);
+        $('.sun-moon').removeClass('ion-ios-sunny').addClass('ion-ios-moon')
+    } else {
+        $('.dark-theme').removeAttr('disabled')
+        $('.light-theme').prop('disabled', true);
+        $('.sun-moon').removeClass('ion-ios-moon').addClass('ion-ios-sunny')
+    }
+
+})
+
+
+// nav-menu selection
+function select(element) {
+    $('.select').removeClass('active').filter(element).toggleClass('active');
+}
+
+// selecting chats
+function selectChat(element) {
+    updatechats();
+    $('.chatname').removeClass('active-chat').filter(element).toggleClass('active-chat');
+    var name = $(this).find('.name').text().trim()
+    var img_src = $(this).find('img').attr('src');
+    
+    $('#chats .name').text(name)
+    $('#chats .dp img').attr('src', img_src)
+    $('.active-contact').removeClass('hidden')
+    $('#messagebox').removeClass('hidden')
+
+    
+}
+
+$('.chatname').on('click', function(){
+    var name = $(this).find('.name').text().trim()
+    var img_src = $(this).find('img').attr('src');
+    
+    $('#chats .name').text(name)
+    $('#chats .dp img').attr('src', img_src)
+})
+
+var allItems = $('.chatnames')
+function isAnyItemSelected(){
+    return allItems.hasClass('active-chat')
+}
+function updatechats(){
+    $('.box').toggleClass("hidden", isAnyItemSelected())
+}
+
+
+
+
+
+
+// responsive actions
+if ($(window).width() < 820) {
+    
+    $('.chatname').click(function () {
+        $('#chats').css('display', 'block'),
+            $('#chat-contacts').css('display', 'none')
+    })
+
+    $('.backbtn').click(function () {
+        $('#chats').css('display', 'none'),
+            $('#chat-contacts').css('display', 'block')
+    })
+
+}
+
+
+
+
+
+
+
+        // changing the home page using ajax
+        $('#chat-page').click(function (event) {
+
+            event.preventDefault();
+            
+            var url = $(this).attr('href');
+            $.ajax({
+                url: url,
+                success: function (response) {
+                    $('#script2').html("")
+                    $('#style2').html("")
+                    $('#chat-content').html($(response).find('#chat-content').html());
+                    var newTitle = $(response).filter('title').text();
+                    $('title').text(newTitle);
+                    $.getScript("{% static 'chat/js/script.js' %}")
+                }
+            })
+        })
+
+
+
+        // changing the Notification page using ajax
+        $('#notifications').click(function (event) {
+            event.preventDefault();
+            var url = $(this).attr('href');
+            $.ajax({
+                url: url,
+                success: function (response) {
+                    $('#chat-content').html($(response).find('#chat-content').html());
+                    var newTitle = $(response).filter('title').text();
+                    $('title').text(newTitle)
+                    var newcss = $(response).filter('style#custom-css').html();
+                    $('#style2').html('<style>'+newcss+'</style>');
+                    var newjs = $(response).filter('#script').html();
+                    
+                    $('#script2').html('<script>'+newjs+'<\/script>')
+                    
+                    
+                }
+            })
+        })
+        
+
+        // changing the search user page using ajax
+        $('#search_user').click(function (event) {
+            event.preventDefault();
+            var url = $(this).attr('href');
+            $.ajax({
+                url: url,
+                success: function (response) {
+                    
+                    $('#chat-content').html($(response).find('#chat-content').html());
+                    var newTitle = $(response).filter('title').text();
+                    $('title').text(newTitle);
+                    var newcss = $(response).filter('style#custom-css').html();
+                    $('#style2').html('<style>'+newcss+'</style>');
+                    var newjs = $(response).filter('#script').html();
+                    $('#script2').html('<script>'+newjs+'<\/script>');
+                }
+            })
+        })
+
+
+        // changing the group-chat page using ajax
+        $('#group-chat').click(function (event) {
+            event.preventDefault();
+            var url = $(this).attr('href');
+            $.ajax({
+                url: url,
+                success: function (response) {
+                    $('#chat-content').html($(response).find('#chat-content').html());
+                    var newTitle = $(response).filter('title').text();
+                    $('title').text(newTitle)
+                    var newcss = $(response).filter('style#custom-css').html();
+                    $('#style2').html('<style>'+newcss+'</style>');
+                    var newjs = $(response).filter('#script').html();
+                    
+                    $('#script2').html('<script>'+newjs+'<\/script>')
+                    
+                    
+                }
+            })
+        })
+        // changing the user-profile page using ajax
+        $('#user-profile').click(function (event) {
+            event.preventDefault();
+            var url = $(this).attr('href');
+            $.ajax({
+                url: url,
+                success: function (response) {
+                    $('#chat-content').html($(response).find('#chat-content').html());
+                    var newTitle = $(response).filter('title').text();
+                    $('title').text(newTitle)
+                    var newcss = $(response).filter('style#custom-css').html();
+                    $('#style2').html('<style>'+newcss+'</style>');
+                    var newjs = $(response).filter('#script').html();
+                    
+                    $('#script2').html('<script>'+newjs+'<\/script>')
+                    
+                    
+                    
+                }
+            })
+        })
+        // changing the logout page using ajax
+        $('#logout').click(function (event) {
+            event.preventDefault();
+            var url = $(this).attr('href');
+            $.ajax({
+                url: url,
+                success: function (response) {
+                    $('#chat-content').html($(response).find('#chat-content').html());
+                    var newTitle = $(response).filter('title').text();
+                    $('title').text(newTitle)
+                    var newcss = $(response).filter('style#custom-css').html();
+                    $('#style2').html('<style>'+newcss+'</style>');
+                    var newjs = $(response).filter('#script').html();
+                    
+                    $('#script2').html('<script>'+newjs+'<\/script>')
+                    
+                    
+                }
+            })
+        })
+
+    })
+
+
+
+</script>
+</html>

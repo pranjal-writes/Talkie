@@ -1,0 +1,170 @@
+{% extends 'chat/base.html' %} {% block title %}User Profile{% endblock %}
+{% block css %}
+<style id="custom-css">
+
+#chat-content{
+        width: 100%;
+                display: block;
+}
+
+
+.upload{
+  width: 195px;
+  position: relative;
+  margin: 2em auto;
+}
+
+.upload img{
+  border-radius: 50%;
+  border: 2px solid var(--font-color);
+  height: 200px;
+  width: 200px;
+}
+
+.upload .round{
+  position: absolute;
+  bottom: 0;
+  left: 133px;
+  background: var(--skin-color);
+  width: 50px;
+  height: 50px;
+  line-height: 53px;
+  text-align: center;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.upload .round i {
+        font-size: 2em;
+}
+
+
+.upload .round input[type = "file"]{
+  position: absolute;
+  transform: scale(2);
+  opacity: 0;
+}
+
+input[type=file]::-webkit-file-upload-button{
+    cursor: pointer;
+}
+
+#profile-container p{
+        margin-top: 3em;
+        font-size: 30px;
+        color: var(--font-color);
+        text-align: center;
+}
+
+.logout-btn{
+        
+        font-size: 23px;
+                margin: 4em 46.5%;
+                background: var(--skin-color);
+                border: none;
+                outline: none;
+                color: var(--font-color) !important;
+                padding: 9px;
+                border-radius: 22px;
+                cursor: pointer;
+
+}
+
+.logout-btn a{
+        color: var(--font-color);
+}
+
+
+        </style>
+
+{% endblock %}
+    
+        {% block body %}
+        <div id="chat-content">
+        
+        
+                
+
+
+
+
+                <div class="upload">
+                        <img id="profile-picture" src="{{dp}}"  alt="">
+                        <div class="round">{% csrf_token %}
+                          <input id="profile-picture-input" type="file" accept="image/*">
+                          <i class = "ion-android-camera" style = "color: #fff;"></i>
+                        </div>
+                      </div>
+
+
+
+
+                      <div id="profile-container">
+                        <p>Username: {{user}}</p>
+                        <button class="logout-btn"><a href="{% url 'logout' %}">logout</a></button>
+                        
+                </div>
+
+
+        </div>
+        {% endblock %}
+        {% block js %}
+
+<script id="script">
+
+
+$(document).ready(function () {
+    // Trigger profile picture upload when a file is selected
+    $('#profile-picture-input').on('change', function () {
+        const fileInput = this;
+        if (fileInput.files && fileInput.files[0]) {
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            // Set up the FileReader to read the selected file
+            reader.onload = function (e) {
+                const profilePictureUrl = e.target.result;
+
+                // Send an AJAX request to upload the profile picture
+                $.ajax({
+                    type: 'POST',
+                    url: 'upload_profile_picture', // Replace with the URL to handle profile picture upload
+                    data: { 
+                        csrfmiddlewaretoken: $('[name="csrfmiddlewaretoken"]').val(),
+                        'profile_picture': profilePictureUrl },
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.status === 'success') {
+                            // On successful upload, update the profile picture on the page
+                            $('#profile-picture').attr('src', profilePictureUrl);
+                        } else {
+                            console.log('Error: Unable to upload profile picture.');
+                        }
+                    },
+                    error: function () {
+                        console.log('Error: Unable to upload profile picture.');
+                    }
+                });
+            };
+
+            // Read the selected file as a data URL
+            reader.readAsDataURL(file);
+        }
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script> 
+
+{% endblock %}

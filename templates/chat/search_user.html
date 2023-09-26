@@ -1,0 +1,183 @@
+{% extends 'chat/base.html' %} {% block title %}User search{% endblock %}
+
+
+
+{% block css %}
+<style id="custom-css">
+        #chat-content {
+                width: 100%;
+                display: block;
+        }
+
+        #user-search-container {
+                display: flex;
+                justify-content: center;
+                margin: 0 auto;
+                width: 100%;
+                height: 10%;
+                opacity: 0.4;
+        }
+
+        #user-search-container:hover {
+                opacity: 0.8;
+        }
+
+        .search-box input {
+                font-size: 1.3em;
+                width: 100%;
+        }
+
+        .search-box .ion-search {
+                font-size: 32px;
+        }
+
+        ::placeholder {
+                font-size: 1.3em;
+        }
+
+
+        #result {
+
+                margin: 10px;
+                margin-top: 2.5rem;
+                margin-left: 3.5rem;
+                margin-right: 3.5rem;
+
+        }
+
+        #result .name {
+                border-bottom: 1px solid var(--font-color);
+
+                padding: 5px;
+                margin-bottom: 2rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                opacity: 0.8;
+                font-size: 32px;
+                color: var(--font-color);
+
+        }
+
+        #result .name a {
+                text-decoration: none;
+                cursor: pointer;
+                font-size: 45px;
+                color: var(--skin-color);
+        }
+
+        #result .name:hover {
+                opacity: 1;
+        }
+</style>
+
+{% endblock %}
+
+{% block body %}
+
+
+
+<div id="chat-content">
+
+        <div id="user-search-container">
+                <form action="" method="post" class="search-box">{% csrf_token %}
+                        <input type="text" id="username" name="username" placeholder="Search Chats...">
+                        <button type="submit"><i class="ion-search">
+                                        <a href="#"></a>
+                                </i></button>
+                </form>
+        </div>
+
+
+
+        <div id="result">{% csrf_token %}
+
+                <!-- <div class="name" href="">Pranjal 
+                
+                        <a class="ion-android-person-add"></a></div> -->
+                <!-- <a ><i class="ion-ios-checkmark"></i></a> -->
+
+        </div>
+
+
+</div>
+
+{% endblock %}
+
+
+
+{% block js %}
+
+<script id="script">
+        $(document).ready(function () {
+
+
+                $('#username').keyup(function () {
+                        $.ajax({
+                                url: 'available_users',
+                                type: "POST",
+                                async: true,
+                                data: {
+                                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                                        username: $('#username').val()
+                                },
+                                dataType: 'json',
+                                success: function (data) {
+                                        var avail_users = JSON.parse(data)
+                                        var result = ""
+
+
+                                        avail_users.forEach(element => {
+                                                result += "<div class='name'>" + element + "<a class='ion-android-person-add request-btn' data-recipient-id='" + element + "'></a></div>"
+                                                $("#result").html(result)
+                                        });
+
+                                        //     $("#result").text(data);
+
+                                }
+                        })
+                })
+
+
+                $('#result').on('click', '.name .request-btn', function () {
+                        var recipientUser = $(this).data('recipient-id')
+                        sendFriendRequest();
+                        
+
+                        var target =$(this)
+                        function sendFriendRequest(){
+
+                                $.ajax({
+                                        type:'POST',
+                                        url: 'send_friend_request',
+                                        data:{
+                                                csrfmiddlewaretoken: $('[name="csrfmiddlewaretoken"]').val(),
+                                                'recipient_user':recipientUser
+                                        },
+                                        dataType:'json',
+                                        success: function(data){
+                                                
+                                                if(data.status === 'success'){
+                                                        target.addClass('ion-ios-clock').removeClass('.ion-android-person-add')
+                                                }else if(data.status ==="existing_request"){
+                                                        target.addClass('ion-ios-clock').removeClass('.ion-android-person-add')
+                                                }else if(data.status ==='already_friends'){
+                                                        target.addClass('ion-ios-checkmark').removeClass('.ion-android-person-add')
+                                                }else{console.log('error')}
+                                        }
+                                })
+                        }
+
+                })
+
+
+                
+
+
+
+
+        })
+
+</script>
+
+{% endblock %}

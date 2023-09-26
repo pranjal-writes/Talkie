@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login</title>
+    <link rel="stylesheet" href="{% static 'users/css/style.css' %}">
+    <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+</head>
+
+<body>
+    {% if messages %}
+    <div id="message-container">
+    <div class="message">
+        {% for message in messages %}
+        <p {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}<i class="ion-close-circled"
+            onclick="document.getElementById('message-container').style.opacity='0';setTimeout(function(){document.getElementById('message-container').style.display='none'},500)"></i></p>
+        {% endfor %}
+        
+        </div></div>
+    {% endif %} 
+    <h2>Login to your Account</h2>
+    <h2 class="ion-leaf"></h2>
+    <div id="form-container">
+        <form action="" method="post" id="form">{% csrf_token %}
+            <div class="form-item">
+                <label for="username">Username : </label>
+                <input type="text" name="username" placeholder="Enter your username" required>
+            </div>
+            <div class="form-item">
+
+                <label for="password1">Password : </label>
+                <div class="password">
+                    <input type="password" class="pass" name="pass" placeholder="Enter your password" required>
+                    <span class="ion-eye"></span>
+                </div>
+
+            </div>
+
+            <button id="signup">Login</button>
+        </form>
+    </div>
+
+    <div id="para">
+        <p>New member? <a href="/">Register Here</a></p>
+    </div>
+    <script>
+        const passwordInput = document.querySelector(".pass")
+        const eye = document.querySelector(".ion-eye")
+
+        eye.addEventListener("click", function () {
+            this.classList.toggle("ion-eye-disabled")
+            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password"
+            passwordInput.setAttribute("type", type)
+        });
+
+        function close() {
+            document.getElementsByClassName("message").style.display = "none";
+
+        };
+
+    </script>
+
+</body>
+
+</html>

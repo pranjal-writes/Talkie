@@ -1,0 +1,177 @@
+{% extends 'chat/base.html' %} {% block title %}Notifications{% endblock %}
+
+
+{% block css %}
+<style id="custom-css">
+        #chat-content {
+                display: flex;
+                flex-direction: column;
+        }
+
+
+        #chat-content h2 {
+                color: var(--font-color);
+                margin-left: 1.3rem;
+                margin-top: 1.3rem;
+                margin-bottom: 1.3rem;
+                opacity: 0.8;
+        }
+
+        #container {
+                color: var(--font-color);
+                margin-bottom: 1.3em;
+                margin-left: 1.2em;
+                margin-right: 1.2em;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding-left: 1.3rem;
+                font-size: 28px;
+        }
+
+        #container .btn {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+
+        }
+
+        .confirm-btn {
+                font-size: 28px;
+                margin: 10px;
+                background: var(--skin-color);
+                border: none;
+                outline: none;
+                color: var(--font-color);
+                padding: 9px;
+                border-radius: 22px;
+                cursor: pointer;
+
+        }
+
+        .reject-btn {
+                font-size: 28px;
+                margin: 10px;
+                border: 2px solid var(--font-color);
+                outline: none;
+                background-color: transparent;
+                color: var(--font-color);
+                padding: 9px;
+                border-radius: 22px;
+                cursor: pointer;
+                opacity: 0.8;
+        }
+</style>
+
+{% endblock %}
+
+{% block body %}
+<div id="chat-content">
+        <h2>Friend Requests</h2>
+
+
+
+
+        <div id="container">
+                <!-- <div class="request">Pranjal</div>
+                <div class="btn">
+
+                        <button class="reject-btn">Delete</button>
+                        <button class="confirm-btn">Confirm</button>
+                </div> -->
+        </div>
+
+
+
+
+
+
+</div>
+{% endblock %}
+
+{% block js %}
+
+<script id="script">
+
+        $(document).ready(function () {
+
+                function loadFriendRequests() {
+
+                        $.ajax({
+                                type: 'GET',
+                                url: 'get_pending_requests',
+                                dataType: 'json',
+                                success: function (data) {
+                                        var friendRequests = data.friend_requests
+                                        $('#container').empty()
+                                        friendRequests.forEach(request => {
+                                                var item = '<div class="request">' + request.sender + '</div><div class="btn" data-sender-name="'+request.sender+'">{% csrf_token %}<button class="reject-btn" data-request-id="'+request.id+'">Delete</button><button class="confirm-btn" data-request-id="' + request.id + '">Confirm</button></div>'
+
+                                                $('#container').append(item)
+                                        });
+                                }
+                        })
+                }
+
+                loadFriendRequests();
+                setInterval(loadFriendRequests, 4000);
+                $('#container').on('click', '.confirm-btn', function () {
+                        var requestId = $(this).data('request-id')
+                        var name = $(this).parent().data('sender-name')
+                        
+                        $.ajax({
+                                type: 'POST',
+                                url: 'accept_friend_request',
+                                dataType: 'json',
+                                data: {
+                                        csrfmiddlewaretoken: $('[name="csrfmiddlewaretoken"]').val(),
+                                'request_id':requestId,
+                                'sender_name': name
+                        },
+                                success: function (data) {
+                                        if (data.status === 'success') {
+                                                loadFriendRequests();
+                                        } else {
+                                                console.log('error accepting')
+                                        }
+                                }
+                        })
+                        
+
+
+                })
+
+                $('#container').on('click', '.reject-btn', function (){
+                        
+                        var requestId = $(this).data('request-id')
+                        
+                        // var name = $(this).parent().data('sender-name')
+                        $.ajax({
+                                type: 'POST',
+                                url: 'delete_friend_request',
+                                dataType: 'json',
+                                data: {
+                                        csrfmiddlewaretoken: $('[name="csrfmiddlewaretoken"]').val(),
+                                'request_id':requestId,
+                                // 'sender_name': name
+                        },
+                                success: function (data) {
+                                        if (data.status === 'deleted') {
+                                                loadFriendRequests();
+                                        } else {
+                                                console.log('error deleting')
+                                        }
+                                }
+                        })
+
+                })
+
+
+        })
+
+
+
+</script> 
+
+{% endblock %}
