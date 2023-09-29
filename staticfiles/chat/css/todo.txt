@@ -1,0 +1,1 @@
+make functions cross button in nav menu
