@@ -1,0 +1,1 @@
+web: gunicorn Talkie.wsgi --log-file
